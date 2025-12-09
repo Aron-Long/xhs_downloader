@@ -1,6 +1,7 @@
 from asyncio import run
 from asyncio.exceptions import CancelledError
 from contextlib import suppress
+from os import getenv
 from sys import argv
 
 from source import Settings
@@ -51,9 +52,17 @@ if __name__ == "__main__":
         if len(argv) == 1:
             run(app())
         elif argv[1].upper() == "API":
-            run(api_server())
+            run(
+                api_server(
+                    port=int(getenv("PORT", 5556)),
+                )
+            )
         elif argv[1].upper() == "MCP":
-            run(mcp_server())
+            run(
+                mcp_server(
+                    port=int(getenv("PORT", 5556)),
+                )
+            )
             # run(mcp_server("stdio"))
         else:
             cli()
