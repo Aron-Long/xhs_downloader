@@ -2,18 +2,22 @@ from contextlib import suppress
 from sys import platform
 
 from rich.console import Console
-from rookiepy import (
-    arc,
-    brave,
-    chrome,
-    chromium,
-    edge,
-    firefox,
-    librewolf,
-    opera,
-    opera_gx,
-    vivaldi,
-)
+
+try:
+    from rookiepy import (
+        arc,
+        brave,
+        chrome,
+        chromium,
+        edge,
+        firefox,
+        librewolf,
+        opera,
+        opera_gx,
+        vivaldi,
+    )
+except ImportError:
+    arc = brave = chrome = chromium = edge = firefox = librewolf = opera = opera_gx = vivaldi = None
 
 try:
     from source.translation import _
@@ -35,7 +39,7 @@ class BrowserCookie:
         "Vivaldi": (vivaldi, "Linux, macOS, Windows"),
         "Firefox": (firefox, "Linux, macOS, Windows"),
         "LibreWolf": (librewolf, "Linux, macOS, Windows"),
-    }
+    } if arc else {}
 
     @classmethod
     def run(
@@ -106,13 +110,16 @@ class BrowserCookie:
 
 match platform:
     case "darwin":
-        from rookiepy import safari
-
-        BrowserCookie.SUPPORT_BROWSER |= {
-            "Safari": (safari, "macOS"),
-        }
+        try:
+            from rookiepy import safari
+            BrowserCookie.SUPPORT_BROWSER |= {
+                "Safari": (safari, "macOS"),
+            }
+        except ImportError:
+            pass
     case "linux":
-        BrowserCookie.SUPPORT_BROWSER.pop("OperaGX")
+        if "OperaGX" in BrowserCookie.SUPPORT_BROWSER:
+            BrowserCookie.SUPPORT_BROWSER.pop("OperaGX")
     case "win32":
         pass
     case _:

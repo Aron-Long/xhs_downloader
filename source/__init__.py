@@ -1,5 +1,8 @@
 from .CLI import cli
-from .TUI import XHSDownloader
+try:
+    from .TUI import XHSDownloader
+except ImportError:
+    XHSDownloader = None
 from .application import XHS
 from .module import Settings
 
